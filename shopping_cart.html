@@ -161,7 +161,10 @@
       actions.style.backgroundColor = "red";
     });
 
-    actions.addEventListener("click", removeItem);
+    actions.addEventListener("click", function(event) {
+      removeItem(event);  // Remove the specific item
+      updateTotal();      // Update the total after item removal
+    });
 
     function removeItem(event) {
       const cartItem = event.target.closest(".cart-item"); // Find the closest "cart-item" div
