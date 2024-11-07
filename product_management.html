@@ -79,6 +79,13 @@
                     </div>
                 </div>
                 <div class="col-sm-12">
+                    <label for="productName" class="form-label">Product Name: </label>
+                    <input type="text" class="form-control" id="productName" value="" required>
+                    <div class="invalid-feedback">
+                        Please provide a name.
+                    </div>
+                </div>
+                <div class="col-sm-12">
                     <label for="description" class="form-label">Product Description: </label>
                     <textarea class="form-control" id="description" rows="3" required></textarea>
                     <div class="invalid-feedback">
@@ -171,6 +178,7 @@
 
                     // Get elements by ID
                     const productId = document.getElementById('productId');
+                    const productName = document.getElementById('productName');
                     const description = document.getElementById('description');
                     const productCategory = document.getElementById('productCategory');
                     const productUnitOfMeasure = document.getElementById('productUnitOfMeasure');
@@ -219,6 +227,7 @@
                         // Create the JSON object
                         const productData = {
                             ProductID: productId.value,
+                            ProductName: productName.value,
                             ProductDescription: description.value,
                             ProductCategory: productCategory.value,
                             ProductUnitOfMeasure: productUnitOfMeasure.value,
