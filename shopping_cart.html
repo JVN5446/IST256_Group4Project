@@ -14,6 +14,9 @@
     #cart-items {border: 1px solid #ccc; padding: 10px; margin-bottom: 20px;}
     .cart-item {display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;}
     .cart-item img {width: 50px; height: 50px; object-fit: fill; margin-right: 10px;}
+    .cart-header, .cart-item {display: flex; align-items: center; justify-content: space-between;}
+    .cart-header div, .cart-item div {flex: 1; text-align: center;}
+    .cart-header {font-weight: bold; margin-bottom: 10px;}
     #cart-total {text-align: right;}
     #checkout-btn {background-color: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer;}
     #checkout-btn:hover {background-color: #45a049;}
@@ -47,7 +50,17 @@
     </div>
     <div class="col-sm-8">
       <h3 class="text-center mt-4">4 Store Shopping Cart</h3>
-      <div id="cart-items" class="mt-4"></div>
+      <div id="cart-items" class="mt-4">
+        <!-- Header Row for Cart Items -->
+        <div class="cart-header">
+          <div>Image</div>
+          <div>Product ID</div>
+          <div>Item Price</div>
+          <div>Quantity</div>
+          <div>Total Item Price</div>
+          <div>Actions</div>
+        </div>
+      </div>
       <div id="cart-total" class="text-right mt-4">
         <h4>Total: $<span id="total-amount">0</span></h4>
         <button id="checkout-btn" class="btn btn-success">Checkout</button>
@@ -80,36 +93,36 @@
     const cartItem = document.createElement("div");
     cartItem.classList.add("cart-item");
 
+    const productImgDiv = document.createElement("div");
     const productImg = document.createElement("img");
     productImg.src = product.image;
     productImg.alt = product.productName;
+    productImgDiv.appendChild(productImg);
 
-    const productId = document.createElement("span");
-    productId.textContent = product.productId;
+    const productIdDiv = document.createElement("div");
+    productIdDiv.textContent = product.productId;
 
-    const productName = document.createElement("span");
-    productName.textContent = product.productName;
+    const productPriceDiv = document.createElement("div");
+    productPriceDiv.textContent = "$" + product.productPrice.toFixed(2);
 
+    const quantityDiv = document.createElement("div");
     const quantity = document.createElement("input");
     quantity.type = "number";
     quantity.value = 1;
-
-    const productPrice = document.createElement("span");
-    productPrice.textContent = "$" + product.productPrice.toFixed(2);
-
-    const productTotal = document.createElement("span");
-
-    const calculateTotal = () => {
-      const qty = parseInt(quantity.value) || 1;
-      productTotal.textContent = "$" + (qty * product.productPrice).toFixed(2);
-    };
-
-    calculateTotal();
     quantity.addEventListener("input", () => {
       calculateTotal();
       updateTotal();
     });
+    quantityDiv.appendChild(quantity);
 
+    const productTotalDiv = document.createElement("div");
+    const calculateTotal = () => {
+      const qty = parseInt(quantity.value) || 1;
+      productTotalDiv.textContent = "$" + (qty * product.productPrice).toFixed(2);
+    };
+    calculateTotal();
+
+    const actionsDiv = document.createElement("div");
     const removeBtn = document.createElement("button");
     removeBtn.textContent = "Remove";
     removeBtn.classList.add("btn", "btn-danger");
@@ -117,24 +130,24 @@
       cartItem.remove();
       updateTotal();
     };
+    actionsDiv.appendChild(removeBtn);
 
-    cartItem.append(productImg, productId, productName, productPrice, quantity, productTotal, removeBtn);
-    cartItems.append(cartItem);
+    cartItem.append(productImgDiv, productIdDiv, productPriceDiv, quantityDiv, productTotalDiv, actionsDiv);
+    cartItems.appendChild(cartItem);
   }
 
   function updateTotal() {
-    const totals = Array.from(document.querySelectorAll('.cart-item span:nth-last-child(2)')).map(el => parseFloat(el.textContent.slice(1)));
+    const totals = Array.from(document.querySelectorAll('.cart-item div:nth-last-child(2)')).map(el => parseFloat(el.textContent.slice(1)));
     document.getElementById("total-amount").textContent = totals.reduce((acc, val) => acc + val, 0).toFixed(2);
   }
 
   function generateCartJSON() {
     const items = Array.from(document.getElementsByClassName("cart-item")).map(cartItem => {
-      const id = cartItem.querySelector("span:nth-child(2)").textContent;
-      const name = cartItem.querySelector("span:nth-child(3)").textContent;
-      const price = cartItem.querySelector("span:nth-child(4)").textContent.slice(1);
+      const id = cartItem.querySelector("div:nth-child(2)").textContent;
+      const price = cartItem.querySelector("div:nth-child(3)").textContent.slice(1);
       const qty = cartItem.querySelector("input").value;
-      const total = cartItem.querySelector("span:nth-last-child(2)").textContent.slice(1);
-      return `{ "productId": "${id}", "productName": "${name}", "price": "${price}", "quantity": ${qty}, "total": "${total}" }`;
+      const total = cartItem.querySelector("div:nth-last-child(2)").textContent.slice(1);
+      return `{ "productId": "${id}", "price": "${price}", "quantity": ${qty}, "total": "${total}" }`;
     });
     const jsonString = `[ ${items.join(', ')} ]`;
     document.getElementById("json-output-container").textContent = jsonString;
@@ -142,7 +155,7 @@
 
   document.getElementById("checkout-btn").addEventListener("click", generateCartJSON);
   products.forEach(addToCart);
-    updateTotal()
+  updateTotal();
 </script>
 </body>
 </html>
