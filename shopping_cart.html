@@ -1,31 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="application-name" content="Project #4 Shopping Cart">
-  <meta name="viewport" content="width-device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="application-name" content="Project #4">
+  <meta name="viewport" content="width-device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link rel="icon" type="image/x-icon" href="https://www.freeiconspng.com/uploads/number-4-icon-19.png">
   <title>Shopping Cart</title>
   <style>
     body {font-family: Arial, sans-serif; margin: 20px;}
     h1 {text-align: center;}
-    #cart-items {border: 1px solid #ccc; padding: 10px;margin-bottom: 20px;}
-    .cart-item {display: flex;align-items: center;justify-content: space-between;margin-bottom: 10px;}
-    .cart-item img {width: 50px;height: 50px;object-fit: fill;margin-right: 10px;}
+    #cart-items {border: 1px solid #ccc; padding: 10px; margin-bottom: 20px;}
+    .cart-item {display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;}
+    .cart-item img {width: 50px; height: 50px; object-fit: fill; margin-right: 10px;}
     #cart-total {text-align: right;}
-    #checkout-btn {background-color: #4CAF50;color: white;padding: 10px 20px;border: none;cursor: pointer;}
+    #checkout-btn {background-color: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer;}
     #checkout-btn:hover {background-color: #45a049;}
-
-    /* New Styles for Horizontal JSON Output */
-    #json-output-container {display: flex; overflow-x: auto; border: 1px solid #ccc; padding: 10px; margin-top: 20px;}
-    .json-cart-item {min-width: 200px; margin-right: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9;}
-    .json-cart-item h5 {margin-top: 0;}
-    .json-cart-item p {margin: 5px 0;}
+    #json-output-container {border: 1px solid #ccc; padding: 10px; margin-top: 20px; white-space: pre-wrap;}
   </style>
 </head>
-
 <body>
 <div class="container-fluid">
   <div class="row">
@@ -53,47 +47,39 @@
     </div>
     <div class="col-sm-8">
       <h3 class="text-center mt-4">4 Store Shopping Cart</h3>
-      <div id="cart-items" class="mt-4">
-        <!-- Cart items will be dynamically added here -->
-      </div>
+      <div id="cart-items" class="mt-4"></div>
       <div id="cart-total" class="text-right mt-4">
         <h4>Total: $<span id="total-amount">0</span></h4>
         <button id="checkout-btn" class="btn btn-success">Checkout</button>
       </div>
 
-      <!-- Horizontal JSON output container at the bottom -->
       <div id="json-output-container"></div>
     </div>
     <div class="col-sm-2 border">
       <aside><p>This spot is reserved for ads</p></aside>
     </div>
   </div>
-  //Footer for website
   <div class="row">
     <div class="col-sm-12 border">
       <footer>
-        <a href="https://www.johnstrinkets.com./terms_of_use">Terms of Use</a>
-        <a href="https://www.johnstrinkets.com/cookie_and_privacy_policy">Cookie & Privacy Policy</a>
-        <a href="https://www.johnstrinkets.com/copyright">Copyright</a>
+        <a href="#">Terms of Use</a> |
+        <a href="#">Cookie & Privacy Policy</a> |
+        <a href="#">Copyright</a>
       </footer>
     </div>
   </div>
 </div>
 <script>
-  //Test products for shopping cart:
   const products = [
     { productId: "001", productName: "A Pink #4", productPrice: 400.99, image: "https://static.vecteezy.com/system/resources/previews/024/683/991/non_2x/pink-3d-number-4-free-png.png" },
-    { productId: "002", productName: "A Red #4", productPrice: 20.99, image: "https://atlas-content-cdn.pixelsquid.com/stock-images/number-4-Vay92K1-600.jpg" },
+    { productId: "002", productName: "A Red #4", productPrice: 20.99, image: "https://atlas-content-cdn.pixelsquid.com/stock-images/number-4-Vay92K1-600.jpg" }
   ];
 
-  //Function to add items to cart:
   function addToCart(product) {
-    //Have a variable that holds cart item
     const cartItems = document.getElementById("cart-items");
     const cartItem = document.createElement("div");
     cartItem.classList.add("cart-item");
 
-    //Variables to append to cartItem
     const productImg = document.createElement("img");
     productImg.src = product.image;
     productImg.alt = product.productName;
@@ -104,101 +90,59 @@
     const productName = document.createElement("span");
     productName.textContent = product.productName;
 
-    //Input field with default element of 1
     const quantity = document.createElement("input");
     quantity.type = "number";
     quantity.value = 1;
-    quantity.placeholder = "Enter quantity";
 
     const productPrice = document.createElement("span");
     productPrice.textContent = "$" + product.productPrice.toFixed(2);
 
-    // Variable calculated from quantity and item price
     const productTotal = document.createElement("span");
-    const calculateTotal = () => {
-      const qty = quantity.value ? parseInt(quantity.value) : 1;
-      const total = qty * product.productPrice;
-      productTotal.textContent = "$" + total.toFixed(2);
-    };
-    calculateTotal();
 
-    //Listens to the numbers typed in the quantity field to update the item total and final total
+    const calculateTotal = () => {
+      const qty = parseInt(quantity.value) || 1;
+      productTotal.textContent = "$" + (qty * product.productPrice).toFixed(2);
+    };
+
+    calculateTotal();
     quantity.addEventListener("input", () => {
       calculateTotal();
       updateTotal();
     });
 
-    //Remove button that hides the product and updates the total
-    const actions = document.createElement("button");
-    actions.textContent = "Remove";
-    actions.classList.add("btn", "btn-danger");
-    actions.addEventListener("click", function(event) {
-      removeItem(event);
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "Remove";
+    removeBtn.classList.add("btn", "btn-danger");
+    removeBtn.onclick = () => {
+      cartItem.remove();
       updateTotal();
-    });
+    };
 
-    //Function to remove the item to take the closest element and remove it
-    function removeItem(event) {
-      const cartItem = event.target.closest(".cart-item");
-      if (cartItem) {
-        cartItem.remove();
-      }
-    }
-
-    //Put all elements into the cart item
-    cartItem.appendChild(productImg);
-    cartItem.appendChild(productId);
-    cartItem.appendChild(productName);
-    cartItem.appendChild(productPrice);
-    cartItem.appendChild(quantity);
-    cartItem.appendChild(productTotal);
-    cartItem.appendChild(actions);
-
-    //Put the cart item into "cart items"
-    cartItems.appendChild(cartItem);
+    cartItem.append(productImg, productId, productName, productPrice, quantity, productTotal, removeBtn);
+    cartItems.append(cartItem);
   }
 
-  //function to update the final total
   function updateTotal() {
-    const cartItems = document.getElementsByClassName("cart-item");
-    let total = 0;
-    for (let i = 0; i < cartItems.length; i++) {
-      const itemPrice = parseFloat(cartItems[i].querySelector("span:nth-last-child(2)").textContent.slice(1));
-      total += itemPrice;
-    }
-    document.getElementById("total-amount").textContent = total.toFixed(2);
+    const totals = Array.from(document.querySelectorAll('.cart-item span:nth-last-child(2)')).map(el => parseFloat(el.textContent.slice(1)));
+    document.getElementById("total-amount").textContent = totals.reduce((acc, val) => acc + val, 0).toFixed(2);
   }
 
   function generateCartJSON() {
-    const cartItems = document.getElementsByClassName("cart-item");
-    const jsonOutputContainer = document.getElementById("json-output-container");
-    jsonOutputContainer.innerHTML = ""; // Clear previous JSON output
-
-    for (let i = 0; i < cartItems.length; i++) {
-      const productId = cartItems[i].querySelector("span:nth-child(2)").textContent;
-      const productName = cartItems[i].querySelector("span:nth-child(3)").textContent;
-      const price = parseFloat(cartItems[i].querySelector("span:nth-child(4)").textContent.slice(1));
-      const quantity = parseInt(cartItems[i].querySelector("input").value);
-
-      const cartItemJSON = document.createElement("div");
-      cartItemJSON.classList.add("json-cart-item");
-      cartItemJSON.innerHTML = `
-        <h5>${productName}</h5>
-        <p>ID: ${productId}</p>
-        <p>Price: $${price.toFixed(2)}</p>
-        <p>Quantity: ${quantity}</p>
-        <p>Total: $${(price * quantity).toFixed(2)}</p>
-      `;
-
-      jsonOutputContainer.appendChild(cartItemJSON);
-    }
+    const items = Array.from(document.getElementsByClassName("cart-item")).map(cartItem => {
+      const id = cartItem.querySelector("span:nth-child(2)").textContent;
+      const name = cartItem.querySelector("span:nth-child(3)").textContent;
+      const price = cartItem.querySelector("span:nth-child(4)").textContent.slice(1);
+      const qty = cartItem.querySelector("input").value;
+      const total = cartItem.querySelector("span:nth-last-child(2)").textContent.slice(1);
+      return `{ "productId": "${id}", "productName": "${name}", "price": "${price}", "quantity": ${qty}, "total": "${total}" }`;
+    });
+    const jsonString = `[ ${items.join(', ')} ]`;
+    document.getElementById("json-output-container").textContent = jsonString;
   }
 
   document.getElementById("checkout-btn").addEventListener("click", generateCartJSON);
-
-  products.forEach(product => addToCart(product));
-  updateTotal();
+  products.forEach(addToCart);
+    updateTotal()
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-zcb3+fhvQZ+HCq8GzI1E2u8ttbOGZmvOj1kqgOHw4fZBoNCmYu7Bh4w0k2h+biIq" crossorigin="anonymous"></script>
 </body>
 </html>
