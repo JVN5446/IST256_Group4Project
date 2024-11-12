@@ -156,9 +156,13 @@
     document.getElementById("json-output-container").textContent = jsonString;
   }
 
-  document.getElementById("checkout-btn").addEventListener("click", generateCartJSON);
+  document.getElementById("checkout-btn").addEventListener("click", function(event){
+    generateCartJSON()
+    window.location.href = "shipment_info.html"
+  });
   products.forEach(addToCart);
   updateTotal();
+
 </script>
 </body>
 </html>
